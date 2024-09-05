@@ -58,10 +58,10 @@ jobs:
               const page = await browser.newPage();
               const reportUrl = 'https://${{ github.repository_owner }}.github.io/new_IVAN_tests_playwrite/';
               await page.goto(reportUrl);
-              await page.waitForSelector('div.widgets-grid');
-              const element = await page.$('div.widgets-grid');
-              if (element) {
-              await element.screenshot({ path: 'allure-report-screenshot.png' });
+              await page.waitForSelector('//div[@class="widgets-grid"]');
+              const locator = await page.locator('//div[@class="widgets-grid"]');
+              if (locator) {
+              await locator.screenshot({ path: 'allure-report-screenshot.png' });
               } else {
               console.error('Element not found');
               }
