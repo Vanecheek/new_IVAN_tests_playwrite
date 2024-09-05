@@ -1,0 +1,4 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","10210","check catalog appeared","chromium","Thu Sep 05 13:13:33 UTC 2024","failed","Thu Sep 05 13:13:43 UTC 2024","Rozetka","example.spec.ts","",""
+"","10263","check catalog count","chromium","Thu Sep 05 13:13:33 UTC 2024","failed","Thu Sep 05 13:13:44 UTC 2024","Rozetka","example.spec.ts","",""
+"","10645","check search result","chromium","Thu Sep 05 13:13:34 UTC 2024","failed","Thu Sep 05 13:13:44 UTC 2024","Rozetka","example.spec.ts","",""
