@@ -46,6 +46,21 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./allure-report
 
+      - name: Install Puppeteer
+        run: npm install puppeteer
+
+      - name: Create Allure Report Screenshot
+        run: |
+          node -e "
+          const puppeteer = require('puppeteer');
+          (async () => {
+              const browser = await puppeteer.launch();
+              const page = await browser.newPage();
+              await page.goto('./allure-report/index.html');
+              await page.screenshot({ path: 'allure-report-screenshot.png' });
+              await browser.close();
+              })();"
+
       - name: Send Telegram Notification
         if: always()
         env:
@@ -56,3 +71,4 @@ jobs:
           REPORT_URL="https://${{ github.repository_owner }}.github.io/${REPO_NAME}/"
           MESSAGE="Тесты проранились, иди смотри блять, вдруг что то как обычно наебнулось $REPORT_URL"
           curl -s -X POST https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage -d chat_id=$TELEGRAM_CHAT_ID -d text="$MESSAGE"
+          curl -s -X POST https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendPhoto -F chat_id=$TELEGRAM_CHAT_ID -F photo=@allure-report-screenshot.png
