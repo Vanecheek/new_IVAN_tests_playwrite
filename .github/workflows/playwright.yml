@@ -1,12 +1,8 @@
-name: Playwright Tests
+name: CI Vanecheek
 
 on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
   schedule:
-    - cron: "34 12 * * *" # Запускається о 14:34 за київським часом (UTC+2)
+    - cron: "30 12 * * *" # Запускається о 14:34 за київським часом (UTC+2)
   workflow_dispatch: # Додає можливість запускати вручну
 
 jobs:
