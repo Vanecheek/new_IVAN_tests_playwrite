@@ -58,8 +58,8 @@ jobs:
               const page = await browser.newPage();
               const reportUrl = 'https://vanecheek.github.io/new_IVAN_tests_playwrite';
               await page.goto(reportUrl);
-              await page.waitForSelector('//div[@class="widgets-grid"]');
-              const locator = await page.locator('//div[@class="widgets-grid"]');
+              await page.waitForSelector('//div[@class=\'widgets-grid\']');
+              const locator = await page.locator('//div[@class=\'widgets-grid\']');
               if (locator) {
               await locator.screenshot({ path: 'allure-report-screenshot.png' });
               } else {
@@ -76,6 +76,6 @@ jobs:
         run: |
           REPO_NAME="new_IVAN_tests_playwrite"
           REPORT_URL="https://${{ github.repository_owner }}.github.io/${REPO_NAME}/"
-          MESSAGE="Тесты проранились, иди смотри блять, вдруг что то как обычно наебнулось $REPORT_URL"
+          MESSAGE="Ебаный скриншот находить не хочет, ГНИДА $REPORT_URL"
           curl -s -X POST https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage -d chat_id=$TELEGRAM_CHAT_ID -d text="$MESSAGE"
           curl -s -X POST https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendPhoto -F chat_id=$TELEGRAM_CHAT_ID -F photo=@allure-report-screenshot.png
