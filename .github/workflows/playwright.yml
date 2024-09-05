@@ -1,4 +1,4 @@
-name: ci-vanacheek-pipline
+name: ci-vanacheek-pipeline
 
 on:
   schedule:
@@ -58,8 +58,13 @@ jobs:
               const page = await browser.newPage();
               const reportUrl = 'https://${{ github.repository_owner }}.github.io/new_IVAN_tests_playwrite/';
               await page.goto(reportUrl);
+              await page.waitForSelector('div.widgets-grid');
               const element = await page.$('div.widgets-grid');
-              await element.screenshot({ path: 'allure-report-screenshot.png'});
+              if (element) {
+              await element.screenshot({ path: 'allure-report-screenshot.png' });
+              } else {
+              console.error('Element not found');
+              }
               await browser.close();
               })();"
 
