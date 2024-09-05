@@ -58,8 +58,8 @@ jobs:
               const page = await browser.newPage();
               const reportUrl = 'https://vanecheek.github.io/new_IVAN_tests_playwrite';
               await page.goto(reportUrl);
-              await page.waitForSelector('//div[@class=\'widgets-grid\']');
-              const locator = await page.locator('//div[@class=\'widgets-grid\']');
+              await page.waitForSelector('//div[@class=\'widgets-grid\']/div/div');
+              const locator = await page.locator('//div[@class=\'widgets-grid\']/div/div');
               if (locator) {
               await locator.screenshot({ path: 'allure-report-screenshot.png' });
               } else {
