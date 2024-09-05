@@ -58,7 +58,8 @@ jobs:
               const page = await browser.newPage();
               const reportUrl = 'https://${{ github.repository_owner }}.github.io/new_IVAN_tests_playwrite/';
               await page.goto(reportUrl);
-              await page.screenshot({ path: 'allure-report-screenshot.png', fullPage: true });
+              const element = await page.$('div.widgets-grid');
+              await element.screenshot({ path: 'allure-report-screenshot.png'});
               await browser.close();
               })();"
 
