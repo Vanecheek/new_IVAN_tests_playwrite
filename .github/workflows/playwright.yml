@@ -56,8 +56,9 @@ jobs:
           (async () => {
               const browser = await puppeteer.launch();
               const page = await browser.newPage();
-              await page.goto('./allure-report/index.html');
-              await page.screenshot({ path: 'allure-report-screenshot.png' });
+              const reportUrl = 'https://${{ github.repository_owner }}.github.io/new_IVAN_tests_playwrite/';
+              await page.goto(reportUrl);
+              await page.screenshot({ path: 'allure-report-screenshot.png', fullPage: true });
               await browser.close();
               })();"
 
