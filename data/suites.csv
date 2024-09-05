@@ -1,4 +1,4 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","10161","check catalog count","chromium","Thu Sep 05 16:00:26 UTC 2024","failed","Thu Sep 05 16:00:36 UTC 2024","Rozetka","example.spec.ts","",""
-"","9899","check catalog appeared","chromium","Thu Sep 05 16:00:26 UTC 2024","failed","Thu Sep 05 16:00:36 UTC 2024","Rozetka","example.spec.ts","",""
-"","9944","check search result","chromium","Thu Sep 05 16:00:26 UTC 2024","failed","Thu Sep 05 16:00:36 UTC 2024","Rozetka","example.spec.ts","",""
+"","10429","check catalog count","chromium","Thu Sep 05 16:08:27 UTC 2024","failed","Thu Sep 05 16:08:37 UTC 2024","Rozetka","example.spec.ts","",""
+"","10699","check search result","chromium","Thu Sep 05 16:08:27 UTC 2024","failed","Thu Sep 05 16:08:38 UTC 2024","Rozetka","example.spec.ts","",""
+"","10438","check catalog appeared","chromium","Thu Sep 05 16:08:27 UTC 2024","failed","Thu Sep 05 16:08:37 UTC 2024","Rozetka","example.spec.ts","",""
