@@ -7,7 +7,7 @@ test.describe('Rozetka', async () => {
   test('check catalog appeared', async ({ page }) => {
     await page.goto('https://rozetka.com.ua/');
   
-    await page.locator('').click();
+    await page.locator('//rz-fat-menu-header-btn/button').click();
   
     await expect(page.locator('//li[@class="menu-categories__item"]/a[contains(@href,"computers-notebooks")]')).toBeVisible();
     await expect(page.locator('//li[@class="menu-categories__item"]/a[contains(@href,"computers-notebooks")]')).toBeInViewport();
