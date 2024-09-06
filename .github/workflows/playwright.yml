@@ -52,21 +52,15 @@ jobs:
       - name: Create Allure Report Screenshot
         run: |
           node -e "
-          const puppeteer = require('puppeteer');
-          (async () => {
-              const browser = await puppeteer.launch();
-              const page = await browser.newPage();
-              const reportUrl = 'https://vanecheek.github.io/new_IVAN_tests_playwrite';
-              await page.goto(reportUrl);
-              await page.waitForSelector('//div[@class=\'widgets-grid\']/div/div[@data-id=\'summary\']');
-              const locator = await page.locator('//div[@class=\'widgets-grid\']/div/div[@data-id=\'summary\']');
-              if (locator) {
-              await locator.screenshot({ path: 'allure-report-screenshot.png' });
-              } else {
-              console.error('Element not found');
-              }
-              await browser.close();
-              })();"
+            const puppeteer = require('puppeteer');
+            (async () => {
+                const browser = await puppeteer.launch();
+                const page = await browser.newPage();
+                const reportUrl = 'https://Vanecheek.github.io/new_IVAN_tests_playwrite/';
+                await page.goto(reportUrl);
+                await page.screenshot({ path: 'allure-report-screenshot.png', fullPage: true });
+                await browser.close();
+                })();"
 
       - name: Send Telegram Notification
         if: always()
@@ -76,6 +70,6 @@ jobs:
         run: |
           REPO_NAME="new_IVAN_tests_playwrite"
           REPORT_URL="https://${{ github.repository_owner }}.github.io/${REPO_NAME}/"
-          MESSAGE="Ебаный скриншот находить не хочет, ГНИДА $REPORT_URL"
+          MESSAGE="Cлавик лох, наелся блох. Лови плюху: $REPORT_URL"
           curl -s -X POST https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage -d chat_id=$TELEGRAM_CHAT_ID -d text="$MESSAGE"
           curl -s -X POST https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendPhoto -F chat_id=$TELEGRAM_CHAT_ID -F photo=@allure-report-screenshot.png
