@@ -6,7 +6,9 @@ test.describe('Rozetka', async () => {
 
   test('check catalog appeared', async ({ page }) => {
     await page.goto('https://rozetka.com.ua/');
-  
+    console.log("start timout")
+    await page.waitForTimeout(10000)
+    console.log("stop timout")
     await page.locator('//rz-fat-menu-header-btn/button').click();
   
     await expect(page.locator('//li[@class="menu-categories__item"]/a[contains(@href,"computers-notebooks")]')).toBeVisible();
@@ -16,6 +18,10 @@ test.describe('Rozetka', async () => {
   test('check search result', async ({ page }) => {
     var search = "Mouse";
     await page.goto('https://rozetka.com.ua/');
+
+    console.log("start timout")
+    await page.waitForTimeout(10000)
+    console.log("stop timout")
 
     await page.locator('//input[@rzsearchinput]').pressSequentially(search);
     await page.keyboard.press("Enter");
@@ -27,6 +33,10 @@ test.describe('Rozetka', async () => {
   test('check catalog count', async ({ page }) => {
     await page.goto('https://rozetka.com.ua/');
   
+    console.log("start timout")
+    await page.waitForTimeout(10000)
+    console.log("stop timout")
+    
     await page.locator('//rz-fat-menu-header-btn/button').click();
     await expect(page.locator('//li[@class="menu-categories__item"]/a[contains(@href,"computers-notebooks")]')).toBeVisible();
     
