@@ -2,7 +2,7 @@ name: ci-vanacheek-pipeline
 
 on:
   schedule:
-    - cron: "40 8 * * *" #(UTC+3)
+    - cron: "50 8 * * *" #(UTC+3)
   workflow_dispatch: # Додає можливість запускати вручну
 
 jobs:
