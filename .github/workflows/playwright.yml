@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18.15.0" #lts/*
+          node-version: lts/*
 
       - name: Install dependencies
         run: npm ci
@@ -26,7 +26,8 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests
-        run: npx playwright test --reporter=list,allure-playwright
+        run: npx playwright test --trace on-first-retry --screenshot=on --reporter=list,allure-playwright
+        # npx playwright test --trace on-first-retry --reporter=list
         continue-on-error: true
 
       - name: Install Allure Commandline
