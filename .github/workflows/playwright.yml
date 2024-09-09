@@ -27,7 +27,6 @@ jobs:
 
       - name: Run Playwright tests
         run: npx playwright test --trace on-first-retry --screenshot=on --reporter=list,allure-playwright
-        # npx playwright test --trace on-first-retry --reporter=list
         continue-on-error: true
 
       - name: Install Allure Commandline
