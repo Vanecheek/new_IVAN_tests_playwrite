@@ -30,7 +30,9 @@ jobs:
         continue-on-error: true
 
       - name: Install Allure Commandline
-        run: npm install allure-commandline --save-dev
+        run: |
+          npm install -g allure-commandline
+          allure --version
 
       - name: Check Allure Results
         run: ls -la ./allure-results
@@ -38,6 +40,12 @@ jobs:
       - name: Generate Allure Report
         if: always()
         run: npx allure generate ./allure-results --clean -o ./allure-report
+
+      - name: Upload Allure Report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: ./allure-report
 
       - name: Deploy Allure Report to GitHub Pages
         if: always()
