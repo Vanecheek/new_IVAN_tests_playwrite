@@ -26,7 +26,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests
-        run: npx playwright test --trace on-first-retry --screenshot=on --reporter=list,allure-playwright
+        run: npx playwright test --reporter=list,allure-playwright
         continue-on-error: true
 
       - name: Install Allure Commandline

@@ -16,13 +16,14 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,/* Fail the build on CI if you accidentally left test.only in the source code. */
   retries: process.env.CI ? 0 : 0,  /* Retry on CI only */
   workers: process.env.CI ? 5 : 5,  /* Opt out of parallel tests on "CI : local" */
+  use: {
+    screenshot: 'on',
+    trace: 'on-first-retry',
+  },
   reporter: [
     ['list'],
     ['allure-playwright']
   ],
-  use: {
-    trace: 'on-first-retry',
-  },
 
   projects: [
       {
