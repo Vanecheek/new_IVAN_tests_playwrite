@@ -19,6 +19,7 @@ export default defineConfig({
   use: {
     screenshot: 'on',
     trace: 'on-first-retry',
+    baseURL: 'https://jsonplaceholder.typicode.com',
   },
   reporter: [
     ['list'],

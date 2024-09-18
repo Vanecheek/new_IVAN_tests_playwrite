@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { describe } from 'node:test';
-import { PlaywrightPage } from '../pages/playwright-page';
+import { PlaywrightPage } from '../../pages/playwright-page';
 
 test.describe('Playwright', async () => {
   test('check playright page', async ({ page }) => {
