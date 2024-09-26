@@ -1,5 +1,7 @@
 import {expect, test} from '@playwright/test';
-import {ContriesResponses} from './../../responses/contries-responses'
+import {ContriesResponses} from '../../responses/contries-responses'
+
+test.describe('ContriesResponses', () => {
 
 test("POST: get contries length", async ({request}) => {
     const contriesResponses = new ContriesResponses(request);
@@ -18,3 +20,5 @@ test("POST: get contrie Ukraine", async ({request}) => {
     expect(body.data.countries[0].name).toBe("Ukraine");
     expect(response.status()).toBe(200);
 })
+
+});
