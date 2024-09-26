@@ -29,4 +29,27 @@ export class ContriesResponses{
             }
         ) 
     }
+
+    async postContrieUA() {
+        return await this.request.post(
+            "https://countries.trevorblades.com/",
+            {
+                data:{
+                    query: `           
+                    {
+                        countries(filter: {code: {eq: "UA"}}) {
+                            code
+                            name
+                            phone
+                            emoji
+                            languages {
+                            name
+                            }
+                        }
+                        }           
+                    `,
+                }
+            }
+        ) 
+    }
 }
