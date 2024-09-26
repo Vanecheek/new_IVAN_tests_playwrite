@@ -1,6 +1,6 @@
 import {expect, test} from '@playwright/test';
 
-test.only("API some test", async ({request}) => {
+test("API some test", async ({request}) => {
     const response = await request.post(
         "https://countries.trevorblades.com/",
         {
