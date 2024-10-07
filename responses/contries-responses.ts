@@ -19,11 +19,11 @@ export class ContriesResponses{
                           name
                           phone
                           emoji
-                          languages {
-                            name
-                          }
+                        languages {
+                          name
+                         }
                         }
-                      }                
+                    }                
                     `,
                 }
             }
