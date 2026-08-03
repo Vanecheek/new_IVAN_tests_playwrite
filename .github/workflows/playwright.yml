@@ -172,7 +172,7 @@ jobs:
             STATUS="❌ Тесты упали, еблан"
           fi
 
-          MESSAGE="🚀 CI завершився
+          MESSAGE="$STATUS
 
           📊 <a href=\"$REPORT_URL\">Відкрити Allure Report</a>"
 
