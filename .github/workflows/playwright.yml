@@ -2,8 +2,14 @@ name: ci-vanacheek-pipeline
 
 on:
   schedule:
-    - cron: "55 9 * * *" #(UTC+3)
-  workflow_dispatch: # Додає можливість запускати вручну
+    # GitHub Actions cron працює в UTC.
+    # 09:55 UTC = 12:55 за Києвом у літній період.
+    - cron: "55 9 * * *"
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   test:
@@ -17,67 +23,178 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 22
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright Browsers
+      - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests
-        run: npx playwright test --reporter=list,allure-playwright
+        id: playwright-tests
         continue-on-error: true
+        run: npx playwright test --reporter=list,allure-playwright
 
-      - name: Install Allure Commandline
+      - name: Check Allure results
+        if: always()
         run: |
-          npm install -g allure-commandline
-          allure --version
+          echo "Allure results:"
+          ls -la ./allure-results || true
 
-      - name: Check Allure Results
-        run: ls -la ./allure-results
-
-      - name: Generate Allure Report
+      - name: Generate Allure report
         if: always()
         run: npx allure generate ./allure-results --clean -o ./allure-report
 
-      - name: Upload Allure Report as artifact
+      - name: Upload Allure report as artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: ./allure-report
+          if-no-files-found: error
+          retention-days: 14
 
-      - name: Deploy Allure Report to GitHub Pages
+      - name: Deploy Allure report to GitHub Pages
         if: always()
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./allure-report
 
       - name: Install Puppeteer
-        run: npm install puppeteer
+        if: always()
+        run: npm install --no-save puppeteer
 
-      - name: Create Allure Report Screenshot
+      - name: Wait for GitHub Pages and create screenshot
+        if: always()
+        env:
+          REPORT_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
         run: |
-          node -e "
-            const puppeteer = require('puppeteer');
-            (async () => {
-                const browser = await puppeteer.launch();
-                const page = await browser.newPage();
-                const reportUrl = 'https://Vanecheek.github.io/new_IVAN_tests_playwrite/';
-                await page.goto(reportUrl);
-                await page.screenshot({ path: 'allure-report-screenshot.png', fullPage: true });
-                await browser.close();
-                })();"
+          node <<'EOF'
+          const puppeteer = require('puppeteer');
 
-      - name: Send Telegram Notification
+          const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+          (async () => {
+            const reportUrl = process.env.REPORT_URL;
+
+            const browser = await puppeteer.launch({
+              headless: true,
+              args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox'
+              ]
+            });
+
+            try {
+              const page = await browser.newPage();
+
+              await page.setViewport({
+                width: 1920,
+                height: 1080,
+                deviceScaleFactor: 1
+              });
+
+              let loaded = false;
+
+              for (let attempt = 1; attempt <= 12; attempt++) {
+                console.log(
+                  `Opening Allure report, attempt ${attempt}: ${reportUrl}`
+                );
+
+                try {
+                  const response = await page.goto(reportUrl, {
+                    waitUntil: 'networkidle2',
+                    timeout: 30000
+                  });
+
+                  if (response && response.ok()) {
+                    await page.waitForSelector('body', {
+                      timeout: 10000
+                    });
+
+                    loaded = true;
+                    break;
+                  }
+
+                  console.log(
+                    `Page returned status: ${response?.status()}`
+                  );
+                } catch (error) {
+                  console.log(`Report is not ready yet: ${error.message}`);
+                }
+
+                await sleep(10000);
+              }
+
+              if (!loaded) {
+                throw new Error(
+                  `GitHub Pages report was not available: ${reportUrl}`
+                );
+              }
+
+              await sleep(3000);
+
+              await page.screenshot({
+                path: 'allure-report-screenshot.png',
+                fullPage: true
+              });
+
+              console.log('Allure screenshot created');
+            } finally {
+              await browser.close();
+            }
+          })();
+          EOF
+
+      - name: Upload Allure screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-screenshot
+          path: allure-report-screenshot.png
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Send Telegram notification
         if: always()
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          REPORT_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          TEST_OUTCOME: ${{ steps.playwright-tests.outcome }}
         run: |
-          REPO_NAME="new_IVAN_tests_playwrite"
-          REPORT_URL="https://${{ github.repository_owner }}.github.io/${REPO_NAME}/"
-          MESSAGE="Лови плюху: $REPORT_URL"
-          curl -s -X POST https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage -d chat_id=$TELEGRAM_CHAT_ID -d text="$MESSAGE"
-          curl -s -X POST https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendPhoto -F chat_id=$TELEGRAM_CHAT_ID -F photo=@allure-report-screenshot.png
+          if [ "$TEST_OUTCOME" = "success" ]; then
+            STATUS="✅ Тести пройшли успішно"
+          else
+            STATUS="❌ Є впавші тести"
+          fi
+
+          MESSAGE="$STATUS
+          Репозиторій: ${{ github.repository }}
+          Allure report: $REPORT_URL
+          Workflow: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          curl --fail --silent --show-error \
+            -X POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}"
+
+          if [ -f allure-report-screenshot.png ]; then
+            curl --fail --silent --show-error \
+              -X POST \
+              "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto" \
+              -F "chat_id=${TELEGRAM_CHAT_ID}" \
+              -F "photo=@allure-report-screenshot.png"
+          else
+            echo "Screenshot was not created, sending message only"
+          fi
+
+      - name: Mark workflow as failed when tests failed
+        if: always() && steps.playwright-tests.outcome == 'failure'
+        run: |
+          echo "Playwright tests failed"
+          exit 1
