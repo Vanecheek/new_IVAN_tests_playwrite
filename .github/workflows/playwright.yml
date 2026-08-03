@@ -167,21 +167,20 @@ jobs:
           TEST_OUTCOME: ${{ steps.playwright-tests.outcome }}
         run: |
           if [ "$TEST_OUTCOME" = "success" ]; then
-            STATUS="✅ Тести пройшли успішно"
+            STATUS="✅ Тесты прошли, радуйся пока"
           else
-            STATUS="❌ Є впавші тести"
+            STATUS="❌ Тесты упали, еблан"
           fi
 
-          MESSAGE="$STATUS
-          Репозиторій: ${{ github.repository }}
-          Allure report: $REPORT_URL
-          Workflow: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          MESSAGE="🚀 CI завершився
 
-          curl --fail --silent --show-error \
-            -X POST \
-            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
-            --data-urlencode "text=${MESSAGE}"
+          📊 <a href=\"$REPORT_URL\">Відкрити Allure Report</a>"
+
+          curl -s -X POST \
+            "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+            -d chat_id="$TELEGRAM_CHAT_ID" \
+            -d parse_mode="HTML" \
+            --data-urlencode text="$MESSAGE"
 
           if [ -f allure-report-screenshot.png ]; then
             curl --fail --silent --show-error \
